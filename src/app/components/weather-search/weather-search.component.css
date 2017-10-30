@@ -1,0 +1,14 @@
+.search-container{
+    position: relative;
+    text-align: center;
+    margin: 25px auto;
+}
+
+.search-container .input-el{
+    margin: auto;
+    display: inline-block;
+    padding: 10px 20px;
+    text-align: center;
+    width: 200px;
+}
+
