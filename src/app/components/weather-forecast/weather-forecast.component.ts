@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Forecast } from '../../models/forecast.model';
 
 @Component({
   selector: 'weather-forecast',
@@ -8,7 +9,7 @@ import { Component, Input } from '@angular/core';
     <div class="weather-forecast-container__day">{{forecast.day | date}}</div>
 
     <weather-time
-        *ngFor="let weatherTime of forecast.temperaturesDay" 
+        *ngFor="let weatherTime of forecast.weather" 
         [weatherTime]="weatherTime">
     </weather-time>
                       
@@ -18,7 +19,7 @@ import { Component, Input } from '@angular/core';
 })
 export class WeatherForecastComponent {
 
-  @Input() forecast: any;
+  @Input() forecast: Forecast;
 
   public constructor() { }
 

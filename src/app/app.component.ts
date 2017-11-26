@@ -1,20 +1,32 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { AppService } from './app.service';
+import { ForecastService } from './services/forecast.service';
+
+import { Forecast } from './models/forecast.model';
+import { Weather } from './models/weather.model';
 
 @Component({
+  encapsulation: ViewEncapsulation.None,  
   selector: 'app-root',
+  styleUrls: ['./app.component.scss'],  
   template:  `
     <weather-search
       (search)="doSearch($event)">
     </weather-search>
 
-    <ng-container *ngIf="forecastList.length > 0">
+    <ng-container *ngIf="error?.length > 0">
+        {{error}}
+    </ng-container>
+
+    <ng-container *ngIf="forecastList?.length > 0">
       <weather-forecast 
           *ngFor="let item of forecastList"
           [forecast]="item">
       </weather-forecast>
     </ng-container>
+    
   `
 })
 export class AppComponent {
@@ -22,9 +34,10 @@ export class AppComponent {
   /**
    * list of days with a list of 3-hour weather forecast
    */
-  forecastList: any;
+  forecastList: Forecast[];
+  error: string;
 
-  public constructor(private searchService: AppService){}
+  public constructor(private appService: AppService, private forecastService: ForecastService){}
 
   /**
    * Perform search
@@ -32,45 +45,15 @@ export class AppComponent {
    * @param query
    */
   public doSearch(query?: string): void {
+    this.error = '';
     if (query) {
-      this.searchService
+      this.appService
       .doSearch(query)
       .subscribe((result: any) => {
-
-        let currentDay = new Date();
-
-        this.forecastList = [];
-
-        this.forecastList.push({
-          day: currentDay.toDateString(),
-          temperaturesDay: []
-        });
-
-        for(let i = 0; i < result.list.length; i++){
-
-          let weatherTime = new Date(result.list[i].dt_txt).toDateString();
-
-          //checks if its part of the day
-          if(currentDay.toDateString() === weatherTime){
-
-            //adds another 3-hour weather forecast
-            this.forecastList.map((item) => {
-               if(item.day === weatherTime){
-                  item.temperaturesDay.push(result.list[i]);
-               }
-            });
-
-          }else{
-            currentDay.setDate(currentDay.getDate() + 1); //next day
-
-            //if it's a new day, adds a new entrance to the forecast list
-            this.forecastList.push({
-              day: currentDay.toDateString(),
-              temperaturesDay: [result.list[i]]
-            });
-
-          }
-        }
+        this.forecastList = this.forecastService.forecastCity(result);
+      },
+      (err: HttpErrorResponse) => {
+        this.error = 'Something is wrong. Try to search again!!!'; 
       });
     }
   }

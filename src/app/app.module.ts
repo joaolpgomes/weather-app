@@ -7,6 +7,8 @@ import { WeatherTimeComponent } from './components/weather-time/weather-time.com
 import { WeatherForecastComponent } from './components/weather-forecast/weather-forecast.component';
 
 import { AppService } from './app.service';
+import { ForecastService } from './services/forecast.service';
+
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -20,7 +22,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     HttpClientModule
   ],
-  providers: [AppService],
+  providers: [AppService, ForecastService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

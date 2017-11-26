@@ -46,6 +46,8 @@ export class WeatherSearchComponent implements OnInit {
      * @param value
      */
     public onKeyUp(value: string): void {
-      this.keyUpStream.emit(value);
+      if(value.length > 3) {
+        this.keyUpStream.emit(value);        
+      }
     }
 }
